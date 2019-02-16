@@ -1,0 +1,71 @@
+#!/bin/sh
+
+cleanup() {
+	xset dpms 0 0 0
+}
+trap cleanup EXIT
+
+invis=00000000
+
+white=ffffff
+black=000000
+redd=cc241d
+redl=fb4934
+greend=98971a
+greenl=b8bb26
+blued=458558
+bluel=83a598
+purpled=b16286
+purplel=d3869b
+
+ff=ff
+mid=88
+ish=33
+
+wallpaper=~/Pictures/Wallpapers/default
+lockscreen=~/Pictures/lockscreen
+overlay=~/Pictures/lockscreen-overlay
+
+# Check that the lockscreen image is up-to-date
+if [ ! -e "$lockscreen" ] || [ "$(stat -c %Y "$lockscreen")" -lt "$(stat -c %Y "$wallpaper")" ] || [ "$(stat -c %Y "$lockscreen")" -lt "$(stat -c %Y "$overlay")" ] || [ "$(stat -c %Y "$lockscreen")" -lt "$(stat -Lc %Y "$0")" ]; then
+	printf 'Updating lockscreen... '
+	# https://www.imagemagick.org/Usage/resize/#fill
+	# Scale the image to fill 1920x1080 (and maybe overflow it), then resize the canvas around the centre of the image and blur.
+	convert "$wallpaper" -resize 1920x1080^ -gravity center -extent 1920x1080 -blur 0x10 "$overlay" -composite "$lockscreen"
+	printf 'done.\n'
+else
+	printf 'Lockscreen up-to-date.\n'
+fi
+
+# Set the screen timeout
+xset dpms 10 10 10
+
+# Lock the screen
+i3lock \
+	--tiling \
+	--nofork \
+	--ignore-empty-password \
+	--color 111e2f \
+	--image ~/Pictures/lockscreen \
+	--radius 400 \
+	--ring-width 10.0 \
+	--insidecolor $invis \
+	--insidevercolor $invis \
+	--insidewrongcolor $invis \
+	--linecolor $invis \
+	--ringcolor $bluel$ish \
+	--ringvercolor $blued$mid \
+	--ringwrongcolor $redl$mid \
+	--keyhlcolor $blued$mid \
+	--bshlcolor $blued$mid \
+	--separatorcolor $invis \
+	--layoutcolor $white$ff \
+	--wrongcolor $invis \
+	--veriftext '' \
+	--wrongtext '' \
+	--noinputtext '' \
+	--locktext 'locking…' \
+	--lockfailedtext 'locking failed!'
+
+# Reset the screen timeout
+cleanup
