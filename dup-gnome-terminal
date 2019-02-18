@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+
+"""Creates a new gnome-terminal window if an existing window has focus."""
+
+import re
+import subprocess
+
+import dbus
+
+
+def main():
+    window_id = subprocess.run(["xdotool", "getactivewindow"], stdout=subprocess.PIPE).stdout.strip()
+
+    window_props = subprocess.run(["xprop", "-id", window_id], stdout=subprocess.PIPE).stdout
+
+    matches = re.search(rb'_GTK_WINDOW_OBJECT_PATH\(UTF8_STRING\) = "([^"]*)"', window_props)
+
+    if not matches:
+        return
+
+    obj_path = matches[1].decode()
+
+    bus = dbus.SessionBus()
+
+    obj = bus.get_object("org.gnome.Terminal", obj_path)
+
+    actions = dbus.Interface(obj, "org.gtk.Actions")
+
+    actions.Activate("new-terminal", [("tab", "current")], {})
+    actions.Activate("tab-detach", [], {})
+
+
+if __name__ == "__main__":
+    main()
