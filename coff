@@ -1,0 +1,10 @@
+#!/bin/bash
+
+pidfile="/run/user/$(id -u)/compton.pid"
+pid="$(cat "$pidfile")" || return
+kill "$pid"
+rm "$pidfile"
+
+if [ "$1" = "--icon" ]; then
+	printf "%s\n" $'\uf03e' # "image"
+fi
