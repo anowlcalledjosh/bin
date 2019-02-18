@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+
+
+import subprocess
+import sys
+
+
+def main():
+    try:
+        string = sys.argv[1]
+    except IndexError:
+        print("Usage: notify-grep STRING", file=sys.stderr)
+    else:
+        while True:
+            line = input()
+            if string in line:
+                subprocess.run(["notify-send", string, line, "-t", "0", "-i", "error"])
+
+
+if __name__ == "__main__":
+    main()
