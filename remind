@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+
+
+import argparse
+from datetime import date, datetime, time, timedelta
+from os import fork, _exit
+import subprocess
+from time import sleep
+
+
+def main():
+    # Move into the background.
+    if fork():
+        _exit(0)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("time")
+    parser.add_argument("message", nargs="+")
+    args = parser.parse_args()
+    delta = None
+    if args.time.endswith("h"):
+        secs = float(args.time.rstrip("h")) * 60 * 60
+    elif args.time.endswith("m"):
+        secs = float(args.time.rstrip("m")) * 60
+    elif ":" not in args.time:
+        secs = float(args.time.rstrip("s"))
+    else:
+        h, m, *tail = map(int, args.time.split(":"))
+        now = datetime.now().time()
+        if int(h) < now.hour:
+            assert h < 12, f"weird hour {h}"
+            h += 12
+        delta = datetime.combine(date.min, time(h, m, *tail)) - datetime.combine(date.min, now)
+    if delta is None:
+        delta = timedelta(seconds=secs)
+    if delta < timedelta(days=1):
+        print("ok, waiting", delta, "before sending reminder")
+    else:
+        print("refusing to wait for absurd time", delta, "-- exiting")
+        return
+    message = " ".join(args.message)
+    sleep(delta.total_seconds())
+    subprocess.run(["notify-send", "Reminder", message, "-t", "0"])
+
+
+if __name__ == "__main__":
+    main()
