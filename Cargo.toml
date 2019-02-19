@@ -1,0 +1,12 @@
+[package]
+name = "bin"
+version = "0.1.0"
+authors = ["Josh Holland <anowlcalledjosh@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+flame = "*"
+# The PulseAudio in Ubuntu 18.04 is broken, see LP: #1796324.
+libpulse-binding = { version = "2.5", default-features = false }
+notify-rust = "3.5"
+clap = "2.32"
