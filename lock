@@ -45,6 +45,17 @@ i3lock \
 	--tiling \
 	--nofork \
 	--ignore-empty-password \
+	--clock \
+	--timepos 'ix:iy-192' \
+	--timesize 48 \
+	--time-font 'Fira Sans' \
+	--timecolor $white$ff \
+	--timestr '%-I:%M %P' \
+	--datepos 'tx:ty-64' \
+	--datesize 24 \
+	--date-font 'Fira Sans' \
+	--datecolor $white$ff \
+	--datestr '%A %F' \
 	--color 111e2f \
 	--image ~/Pictures/lockscreen \
 	--radius 400 \
