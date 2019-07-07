@@ -31,7 +31,7 @@ if [ ! -e "$lockscreen" ] || [ "$(stat -c %Y "$lockscreen")" -lt "$(stat -c %Y "
 	printf 'Updating lockscreen... '
 	# https://www.imagemagick.org/Usage/resize/#fill
 	# Scale the image to fill 1920x1080 (and maybe overflow it), then resize the canvas around the centre of the image and blur.
-	convert "$wallpaper" -resize 1920x1080^ -gravity center -extent 1920x1080 -blur 0x10 "$overlay" -composite "$lockscreen"
+	convert "$wallpaper" -colorspace LUV -resize 1920x1080^ -gravity center -extent 1920x1080 -blur 0x10 -colorspace sRGB "$overlay" -composite "$lockscreen"
 	printf 'done.\n'
 else
 	printf 'Lockscreen up-to-date.\n'
