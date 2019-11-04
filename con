@@ -1,12 +1,12 @@
 #!/bin/bash
 
-pidfile="/run/user/$(id -u)/compton.pid"
+pidfile="/run/user/$(id -u)/picom.pid"
 if ! [ -e "$pidfile" ]; then
-	compton &>> ~/.xsession-errors & disown
-	printf "%s" "$!" > "$pidfile"
-else
-	printf "compositor is already running\n"
-	exit 1
+	picom --daemon --write-pid-path "$pidfile" &>> ~/.xsession-errors
+	# printf "%s" "$!" > "$pidfile"
+# else
+# 	printf "compositor is already running\n"
+# 	exit 1
 fi
 
 if [ "$1" = "--icon" ]; then

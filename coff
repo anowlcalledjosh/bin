@@ -1,7 +1,7 @@
 #!/bin/bash
 
-pidfile="/run/user/$(id -u)/compton.pid"
-pid="$(cat "$pidfile")" || return
+pidfile="/run/user/$(id -u)/picom.pid"
+pid="$(cat "$pidfile")" || exit
 kill "$pid"
 rm "$pidfile"
 
